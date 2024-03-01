@@ -5,7 +5,7 @@ from django.db import models
 class Contrat(models.Model):
     titre_contrat = models.CharField(max_length=255)
     type_contrat = models.CharField(max_length=255)
-    descripion = models.TextField()
+    description = models.TextField()
     duree = models.IntegerField(default=0)
 
     def __str__(self):
@@ -26,6 +26,8 @@ class Agent(models.Model):
     contrat = models.ForeignKey(Contrat, related_name='agents', on_delete=models.CASCADE, null=True)
     nb_enfants = models.IntegerField(default=0)
     nb_heure = models.IntegerField(default=0)
+    taux_cotisation = models.IntegerField(default=0)
+    taux_impot = models.IntegerField(default=0)
     salaire_horaire = models.FloatField(default=0)
     conges_maladie = models.IntegerField(default=0)
     conges_payes = models.IntegerField(default=0)
@@ -64,7 +66,7 @@ class Paie(models.Model):
     salaire_mois = models.FloatField()
     salaire_annee = models.FloatField()
     #salaire_brute = models.FloatField()
-    salaire_net = models.FloatField()
+    #salaire_net = models.FloatField()
 
     def __str__(self):
         return self.titre_paie

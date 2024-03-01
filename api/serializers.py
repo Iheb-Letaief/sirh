@@ -14,12 +14,13 @@ class AgentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Agent
         fields = ['url','id', 'nom', 'prenom', 'email', 'statut', 'date_naissance', 'contrat', 'nationality', 'cin',
-                  'date_embauche', 'nb_enfants', 'nb_heure', 'salaire_horaire', 'postes', 'created_at', 'modified_at']
+                  'date_embauche', 'nb_enfants', 'nb_heure', 'taux_cotisation', 'taux_impot', 'salaire_horaire', 'postes', 'created_at', 'modified_at']
 
 
 class PaieSerializer(serializers.HyperlinkedModelSerializer):
     salaire_base = serializers.SerializerMethodField()
     salaire_brut = serializers.SerializerMethodField()
+    salaire_net = serializers.SerializerMethodField()
 
     class Meta:
         model = Paie
@@ -31,6 +32,9 @@ class PaieSerializer(serializers.HyperlinkedModelSerializer):
     def get_salaire_brut(self, paie):
         agent = paie.agent
         return paie_utils.calcul_salaire_brut(agent, paie)
+    def get_salaire_net(self, paie):
+        agent = paie.agent
+        return paie_utils.calcul_salaire_net(agent, paie)
 
 class PrimeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -40,7 +44,7 @@ class PrimeSerializer(serializers.HyperlinkedModelSerializer):
 class ContratSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Contrat
-        fields = ['url', 'id', 'titre_contrat', 'type_contrat', 'duree', 'agents']
+        fields = ['url', 'id', 'titre_contrat', 'type_contrat', 'description', 'duree', 'agents']
 
 
 class DeclarationSerializer(serializers.ModelSerializer):
