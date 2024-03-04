@@ -18,11 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
+from api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    #path('', views.api_root, name='api-root'),
     path('', include('api.urls')),
+    path('employees/', include('employees.urls')),
+    path('payrolls/', include('payrolls.urls')),
+    path('contracts/', include('contracts.urls')),
+
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
