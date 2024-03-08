@@ -61,7 +61,7 @@ def calcul_deduction_impot(agent, paie):
 
 # Calculate social contribution deduction
 def calcul_deduction_cotisation_sociale(agent, paie):
-    return calcul_salaire_brut(agent, paie) * (agent.taux_cotisation / 100)
+    return calcul_salaire_brut(agent, paie) * (paie.taux_cotisation / 100)
 
 # Calculate net salary(assuming only tax and contribution for now)
 def calcul_salaire_net(agent, paie):

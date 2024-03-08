@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from employees.models import Agent
 
 from payrolls import paie_utils
@@ -33,13 +34,9 @@ class Paie(models.Model):
         agent = self.agent
         s = paie_utils.calcul_salaire_net(agent, self)
         if s < 0:
-            ValueError("Il sagis'agit d'une paie negative")
+            ValueError("Il s'agit d'une paie negative")
             return 0
         return s
-
-    @salaire_net.setter
-    def salaire_net(self, value):
-        self._salaire_net = value
 
     @property
     def salaire_mois(self):
@@ -48,21 +45,17 @@ class Paie(models.Model):
     def salaire_annee(self):
         return self.salaire_mois * 12
 
-    def is_negative(self):
-        return self.salaire_net < 0
-    def regulariser_paie_negative(self):
-        if self.is_negative():
-            self.salaire_net(0)
-            self.save(update_fields=['salaire_net'])
-
-
+    @property
+    def taux_cotisation(self):
+        total_cotisations = self.cotisations.all().aggregate(total=Sum('taux'))['total'] or 0
+        return total_cotisations
 
 
 class Prime(models.Model):
     titre_prime = models.CharField(max_length=255)
     description = models.TextField()
     montant = models.FloatField()
-    paie = models.ForeignKey(Paie, related_name='primes', on_delete=models.CASCADE, null=True, blank=True)
+    paies = models.ManyToManyField(Paie, related_name='primes', null=True, blank=True)
     #prime_cherte_de_vie = models.BooleanField(default=False)
 
     def __str__(self):
@@ -81,3 +74,22 @@ class Indemnite(models.Model):
 
     def __str__(self):
         return self.titre_indemnite
+
+class Cotisation(models.Model):
+    types = {
+        "CSG": "CSG",
+        "CRDS": "CRDS",
+        "CSA": "CSA",
+        "Cotisation Assurance maladie": "Cotisation Assurance maladie",
+        "Cotisation chomage": "Cotisation chomage",
+        "Cotisation retraite": "Cotisation retraite",
+    }
+
+    type_cotisation = models.CharField(choices=types, max_length=255, default='CSG')
+    taux = models.FloatField()
+    paies = models.ManyToManyField(Paie, related_name='cotisations', null=True, blank=True)
+
+    def __str__(self):
+        return self.type_cotisation
+
+

@@ -62,7 +62,7 @@ class Agent(models.Model):
                 return 1
             else:
                 ValueError("L'apprenti n'a pas le droit de travailler plus de 3 ans")
-        return nb_annees
+            return nb_annees
 
     @property
     def salaire_apprenti(self):
@@ -76,7 +76,6 @@ class Agent(models.Model):
 
 class Apprenti(models.Model):
     agent = models.OneToOneField(Agent, related_name='apprenti', on_delete=models.CASCADE, null=True, blank=True)
-
 
 
 class Poste(models.Model):
