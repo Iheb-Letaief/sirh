@@ -1,6 +1,5 @@
 from django.db import models
 import datetime
-import logging
 
 from contracts.models import Contrat
 
@@ -22,7 +21,7 @@ class Agent(models.Model):
     cin = models.CharField(max_length=255)
     date_embauche = models.DateField()
 
-    contrat = models.ForeignKey(Contrat, related_name='agents', on_delete=models.CASCADE, null=True)
+    contrat = models.ForeignKey(Contrat, related_name='agents', on_delete=models.SET_NULL, null=True, blank=True)
     nb_enfants = models.IntegerField(default=0)
     nb_heure = models.IntegerField(default=0)
 
@@ -40,9 +39,6 @@ class Agent(models.Model):
     # droit_RIFSEEP = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-
-
-
 
     def __str__(self):
         return self.username
@@ -74,12 +70,23 @@ class Agent(models.Model):
             ValueError("L'apprenti doit avoir entre 18 et 26 ans")
 
 
-class Apprenti(models.Model):
-    agent = models.OneToOneField(Agent, related_name='apprenti', on_delete=models.CASCADE, null=True, blank=True)
+class Assfam(models.Model):
+    agent = models.OneToOneField(Agent, on_delete=models.CASCADE, null=True, blank=True)
+    nb_agrement = models.IntegerField(default=0)
+    a_multiple_employeurs = models.BooleanField(default=False)
+
+    def get_agents(self):
+        agent = Agent.objects.filter(agent__nb_enfants__gt=0)
+        return agent
+
+    # @receiver(post_save, sender=Agent)
+    # def create_assfam(sender, instance, created, **kwargs):
+    #     if created and instance.nb_enfants > 0:
+    #         Assfam.objects.create(agent=instance)
 
 
 class Poste(models.Model):
-    agent = models.ForeignKey(Agent, related_name='postes', on_delete=models.CASCADE, null=True, blank=True)
+    agent = models.ForeignKey(Agent, related_name='postes', on_delete=models.SET_NULL, null=True, blank=True)
     titre_poste = models.CharField(max_length=255)
     description = models.TextField()
     droit_NBI = models.BooleanField(default=False)

@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 
 # constants
@@ -74,14 +75,8 @@ def calcul_salaire_net(agent, paie):
 def get_pourcentage_smic(age, experience):
     return smic_percentages[(age, experience)]
 
-#def calcul_salaire_apprenti(agent, paie):
 
 
-# validators
-def validate_paie(paie):
-    if paie.salaire_net < 0:
-        paie.salaire_base = 0
-        paie.salaire_brut = 0
-        paie.salaire_net = 0
-    return paie
+
+
 

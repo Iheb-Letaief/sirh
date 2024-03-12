@@ -6,7 +6,9 @@ from payrolls import views
 router = routers.DefaultRouter()
 router.register(r'paies', views.PaieViewSet, basename='paie')
 router.register(r'primes', views.PrimeViewSet, basename='prime')
+router.register(r'demandeSft', views.DemandeSftViewSet)
 router.register(r'cotisations', views.CotisationViewSet, basename='cotisation')
+
 
 
 

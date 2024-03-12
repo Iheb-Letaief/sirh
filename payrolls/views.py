@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from payrolls.models import Paie, Prime, Cotisation
+from payrolls.models import Paie, Prime, Cotisation, DemandeSft
 
-from payrolls.serializers import PaieSerializer, PrimeSerializer, CotisationSerializer
+from payrolls.serializers import PaieSerializer, PrimeSerializer, CotisationSerializer, DemandeSftSerializer
 
 
 
@@ -23,4 +23,8 @@ class PrimeViewSet(viewsets.ModelViewSet):
 class CotisationViewSet(viewsets.ModelViewSet):
     queryset = Cotisation.objects.all()
     serializer_class = CotisationSerializer
+
+class DemandeSftViewSet(viewsets.ModelViewSet):
+    queryset = DemandeSft.objects.all()
+    serializer_class = DemandeSftSerializer
 

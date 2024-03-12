@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Sum
+import datetime
+
 from employees.models import Agent
 
 from payrolls import paie_utils
@@ -8,7 +10,7 @@ from payrolls import paie_utils
 # Create your models here.
 
 class Paie(models.Model):
-    agent = models.ForeignKey(Agent, related_name='paies', on_delete=models.CASCADE, null=True, blank=True)
+    agent = models.ForeignKey(Agent, related_name='paies', on_delete=models.SET_NULL, null=True, blank=True)
     titre_paie = models.CharField(max_length=255)
     date_remboursement = models.DateTimeField(auto_now_add=True)
 
@@ -70,7 +72,7 @@ class Indemnite(models.Model):
     titre_indemnite = models.CharField(max_length=255)
     description = models.TextField()
     montant = models.FloatField()
-    paie = models.ForeignKey(Paie, related_name='indemnites', on_delete=models.CASCADE, null=True, blank=True)
+    paie = models.ForeignKey(Paie, related_name='indemnites', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.titre_indemnite
@@ -91,5 +93,40 @@ class Cotisation(models.Model):
 
     def __str__(self):
         return self.type_cotisation
+
+
+class DemandeSft(models.Model):
+    statuses = {
+        "En attente": "En attente",
+        "Acceptée": "Acceptée",
+        "Refusée": "Refusée",
+    }
+
+    nom_enfant = models.CharField(max_length=255)
+    status = models.CharField(choices=statuses, max_length=255, default='En attente')
+    date_naissance_enfant = models.DateField(null=True)
+    date_demande = models.DateTimeField(auto_now_add=True, null=True)
+    membre_reversion = models.ForeignKey(Agent, related_name='demandes_Sft', on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.titre_demande
+
+    @property
+    def titre_demande(self):
+        return f"Demande SFT pour {self.nom_enfant}"
+
+    @property
+    def date_debut(self):
+        first_day_current_month = self.date_naissance_enfant.replace(day=1)
+
+        first_day_next_month = first_day_current_month + datetime.timedelta(days=31)
+        first_day_next_month = first_day_next_month.replace(day=1, year=self.date_demande.year)
+
+        return first_day_next_month
+
+    @property
+    def date_fin(self):
+        age_20_years = self.date_naissance_enfant.replace(year=self.date_naissance_enfant.year + 20)
+        return age_20_years.replace(day=1)
 
 

@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from django.urls import reverse
 from rest_framework import viewsets
 
-from employees.models import Agent, Poste, Apprenti
-from employees.serializers import AgentSerializer, PosteSerializer, ApprentiSerializer
-
+from employees.models import Agent, Poste, Assfam
+from employees.serializers import AgentSerializer, PosteSerializer, AssfamSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 # Agent views
@@ -16,7 +18,7 @@ class PosteViewSet(viewsets.ModelViewSet):
     queryset = Poste.objects.all()
     serializer_class = PosteSerializer
 
-# Apprenti views
-class ApprentiViewSet(viewsets.ModelViewSet):
-    queryset = Apprenti.objects.all()
-    serializer_class = ApprentiSerializer
+# Assfam views
+class AssfamViewSet(viewsets.ModelViewSet):
+    queryset = Assfam.objects.all()
+    serializer_class = AssfamSerializer
